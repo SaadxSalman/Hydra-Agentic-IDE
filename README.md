@@ -61,6 +61,3 @@ After publication, the **Performance Agent** monitors the content's performance.
 
 ---
 
-This project demonstrates the power of the n8n AI Agent tool and the MERN stack by creating a sophisticated, end-to-end automation that handles a creative and complex task with minimal human intervention.
-
----
