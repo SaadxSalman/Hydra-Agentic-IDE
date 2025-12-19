@@ -56,7 +56,7 @@ After publication, the **Performance Agent** monitors the content's performance.
 ## 🔧 Implementation Details
 
 * **n8n AI Agent Tool:** This is the central component that orchestrates the entire workflow. Its drag-and-drop interface makes it easy to visualize and debug the complex interactions between agents and nodes.
-* **Integrations:** n8n's extensive library allows for seamless connections to various services. This includes **Google Sheets** (for storing prompts), **Airtable** (for a content calendar), **WordPress** (for blog posts), and a variety of social media APIs.
+* **Integrations:** n8n's extensive library allows for seamless connections to various services. This includes **Google Sheets** (for storing prompts), **Airtable** (for a content calendar), and a variety of social media APIs.
 * **Memory:** The agents use a **Conversation Memory node** or connect to an external database like **PostgreSQL** or **MongoDB** to provide long-term memory, allowing them to learn from past successes and failures.
 
 ---
