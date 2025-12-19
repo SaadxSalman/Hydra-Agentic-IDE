@@ -26,6 +26,48 @@ This project leverages a modern, full-stack architecture for the dashboard and o
 
 ---
 
+### 📂 Project Structure
+
+```text
+autonomous-content-factory/
+├── src/
+│   ├── app/                         # Next.js App Router (Frontend + API)
+│   │   ├── layout.tsx               # Global Layout & Fonts
+│   │   ├── page.tsx                 # Main Dashboard (Form + AgentStatus)
+│   │   ├── analytics/               # Analytics Page
+│   │   │   └── page.tsx             # Top Posts & Insights UI
+│   │   └── api/                     # Backend API Routes
+│   │       ├── trigger-agent/       
+│   │       │   └── route.ts         # Logic to trigger n8n Webhook
+│   │       ├── analytics/           
+│   │       │   └── route.ts         # Fetches top stats from MongoDB
+│   │       
+│   ├── components/                  # UI Components
+│   │   ├── ui/                      # Shadcn/Base UI components
+│   │   ├── TopicForm.tsx            # Input for new topics
+│   │   ├── AgentStatus.tsx          # The progress stepper component
+│   │   └── PerformanceTable.tsx     # Reusable analytics list
+│   ├── lib/                         # Shared Logic
+│   │   ├── mongodb.ts               # Database connection helper
+│   │   └── utils.ts                 # Tailwind merge / formatting utils
+│   └── models/                      # Database Schemas
+│       └── ContentPerformance.ts    # The core MERN schema
+├── n8n/                             # Automation Orchestration
+│   ├── workflow.json                # Exported n8n workflow for backup
+│   └── prompts/                     
+│       ├── research-agent.txt       # System prompt for Research
+│       └── creator-agent.txt        # System prompt for Content Creation
+├── public/                          # Static images and icons
+├── .env.local                       # Environment variables (API Keys)
+├── .gitignore                       # Standard Next.js + .env exclusion
+├── tailwind.config.ts               # Styling configuration
+├── tsconfig.json                    # TypeScript configuration
+└── package.json                     # Dependencies and scripts
+
+```
+
+---
+
 ## ⚙️ Workflow and Agent Roles
 
 The system is a multi-agent workflow orchestrated within the n8n platform. Each agent has a specialized role, ensuring a seamless and efficient process.
@@ -60,4 +102,3 @@ After publication, the **Performance Agent** monitors the content's performance.
 * **Memory:** The agents use a **Conversation Memory node** or connect to an external database like **PostgreSQL** or **MongoDB** to provide long-term memory, allowing them to learn from past successes and failures.
 
 ---
-
