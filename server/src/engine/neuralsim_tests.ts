@@ -14,7 +14,7 @@ export function generateTestsFor(req: TestGenRequest): TestGenResult {
   const tests: TestCase[] = [];
 
   const defRe = lang === 'python'
-    ? /^(\s*)def\s+(test_?[A-Za-z_]\w*)\s*\(([^)]*)\)\s*:/
+    ? /^(\s*)def\s+([A-Za-z_]\w*)\s*\(([^)]*)\)\s*(?:->\s*[^:]+)?:/
     : lang === 'rust'
       ? /^(\s*)fn\s+([A-Za-z_]\w*)\s*(?:<[^>]*>)?\(([^)]*)\)\s*(?:->\s*[^{]+)?\{/
       : /^(\s*)(?:export\s+)?(?:async\s+)?function\s+([A-Za-z_]\w*)\s*\(([^)]*)\)/;

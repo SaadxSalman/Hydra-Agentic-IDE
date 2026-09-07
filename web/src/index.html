@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Hydra-IDE — Swarm-native code studio</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='%2300e5a0'/%3E%3Ctext x='16' y='22' font-size='16' text-anchor='middle' font-family='monospace' fill='%23022019'%3Eψ%3C/text%3E%3C/svg%3E"/>
+  <link rel="stylesheet" href="css/ide.css"/>
+</head>
+<body>
+  <header id="topbar">
+    <div class="brand"><span class="glyph">ψ</span><span>HYDRA<b>IDE</b></span></div>
+    <div class="hstat" id="stat-backend" title="Inference backend">—</div>
+    <div class="hstat" id="stat-model" title="Model">—</div>
+    <div class="hstat" id="stat-agents" title="Swarm agents">—</div>
+    <div class="hstat" id="stat-uptime" title="Router uptime">—</div>
+    <div class="spacer"></div>
+    <button id="btn-view-editor" class="tbtn active">Editor</button>
+    <button id="btn-view-swarm" class="tbtn">Swarm</button>
+    <span id="ws-dot" class="dot" title="WebSocket: connecting…"></span>
+  </header>
+
+  <main id="layout">
+    <aside id="sidebar">
+      <div class="side-head">EXPLORER <button id="btn-new-file" class="mini" title="New file">+ new</button></div>
+      <input id="file-filter" placeholder="filter files…" spellcheck="false"/>
+      <div id="file-tree" class="tree"></div>
+      <div class="side-head">SYMBOLS</div>
+      <input id="symbol-search" placeholder="find symbol…" spellcheck="false"/>
+      <div id="symbol-list" class="symbollist"></div>
+    </aside>
+
+    <section id="center">
+      <div id="tabs"></div>
+      <div id="editor-view">
+        <div id="editor-wrap">
+          <div id="gutter"></div>
+          <div id="code-area">
+            <pre id="highlight" aria-hidden="true"></pre>
+            <textarea id="code" spellcheck="false" wrap="off" autocomplete="off" autocapitalize="off" aria-label="code editor"></textarea>
+          </div>
+          <div id="ghost-menu" hidden></div>
+        </div>
+      </div>
+
+      <div id="swarm-view" hidden>
+        <div id="swarm-kpis"></div>
+        <div id="cluster-cards"></div>
+        <div class="swarm-cols">
+          <div>
+            <div class="side-head">AGENT GRID</div>
+            <div id="agent-grid"></div>
+          </div>
+          <div>
+            <div class="side-head">TASK FEED</div>
+            <div id="task-feed"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="statusbar">
+        <span id="sb-file">no file</span>
+        <span id="sb-lang"></span>
+        <span class="dot" id="sb-dirty" hidden title="Unsaved changes">●</span>
+        <span class="spacer"></span>
+        <span id="sb-votes" title="Consensus votes on last completion"></span>
+        <span id="sb-issues" title="Problems in current file"></span>
+        <span id="sb-pos">Ln 1, Col 1</span>
+        <button id="btn-save" class="sbtn" title="Save (Ctrl+S)">Save</button>
+        <button id="btn-analyze" class="sbtn" title="Analyze current file">Analyze</button>
+      </div>
+    </section>
+
+    <aside id="rightbar">
+      <div class="panel-tabs">
+        <button data-panel="assistant" class="active">Assistant</button>
+        <button data-panel="diagnostics">Problems</button>
+        <button data-panel="tools">Refactor/Test</button>
+        <button data-panel="output">Output</button>
+      </div>
+
+      <div id="panel-assistant" class="panel active">
+        <div id="chat-log"></div>
+        <form id="chat-form">
+          <input id="chat-input" placeholder="Ask the swarm…" autocomplete="off" spellcheck="false"/>
+          <button type="submit">Send</button>
+        </form>
+      </div>
+
+      <div id="panel-diagnostics" class="panel">
+        <div class="panel-actions">
+          <button id="btn-analyze2">Analyze file</button>
+          <span id="diag-meta" class="meta"></span>
+        </div>
+        <div id="issue-list" class="issuelist"></div>
+      </div>
+
+      <div id="panel-tools" class="panel">
+        <div class="tool-section">
+          <div class="side-head">SYMBOL RESOLUTION</div>
+          <form id="resolve-form" class="tool-row">
+            <input id="resolve-input" placeholder="symbol (e.g. load_config)" spellcheck="false"/>
+            <button type="submit">Resolve</button>
+          </form>
+          <div id="resolve-results" class="tool-results"></div>
+        </div>
+        <div class="tool-section">
+          <div class="side-head">REFACTOR SUGGESTIONS</div>
+          <div class="tool-row"><button id="btn-refactor">Suggest refactors for open file</button></div>
+          <div id="refactor-results" class="tool-results"></div>
+        </div>
+        <div class="tool-section">
+          <div class="side-head">TEST SYNTHESIS</div>
+          <div class="tool-row"><button id="btn-tests">Generate tests for open file</button></div>
+          <div id="tests-results" class="tool-results"></div>
+        </div>
+      </div>
+
+      <div id="panel-output" class="panel">
+        <div class="panel-actions">
+          <button id="btn-refresh-logs">Refresh</button>
+          <span id="model-meta" class="meta"></span>
+        </div>
+        <div id="log-view" class="logview"></div>
+      </div>
+    </aside>
+  </main>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

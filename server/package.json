@@ -9,7 +9,7 @@
     "start": "node src/index.ts",
     "dev": "node --watch src/index.ts --dev",
     "build": "echo \"hydra-server is run from source via native Node TS execution (no build step required)\"",
-    "test": "node --test --experimental-test-coverage test/"
+    "test": "node --test --experimental-test-coverage \"test/*.test.ts\""
   },
   "dependencies": {
     "ws": "^8.18.0"

@@ -54,7 +54,7 @@ export class HydraHttpServer {
       this.log.info(`Hydra Router listening on http://${this.cfg.host}:${this.cfg.port}`);
       if (!this.cfg.dev) {
         if (webExists(this.webDist)) this.log.info(`Web IDE served from ${this.webDist}`);
-        else this.log.info('Web IDE not built — run `npm run build -w web` or use `npm run dev` (vite).');
+        else this.log.info('Web IDE not built — run `npm run build -w web` then reload.');
       }
     });
   }
@@ -98,7 +98,10 @@ export class HydraHttpServer {
       case p === '/api/logs': return json({ logs: this.log.recent(200) });
       case p === '/api/tasks': return json({ traces: this.orchid.status().traces });
       case p === '/api/workspace': return json({ tree: this.orchid.workspace.tree(), stats: this.orchid.workspace.stats() });
-      case p === '/api/workspace/file': return json(this.orchid.workspace.get(url.searchParams.get('path') ?? '') ?? { error: 'not found' }, 404);
+      case p === '/api/workspace/file': {
+        const file = this.orchid.workspace.get(url.searchParams.get('path') ?? '');
+        return file ? json(file) : json({ error: 'not found' }, 404);
+      }
       case p === '/api/workspace/files': return json({ files: this.orchid.workspace.list() });
       case p === '/api/suggestions': return json({ symbols: this.orchid.suggestions(url.searchParams.get('prefix') ?? '') });
       case p === '/api/symbols': return json({ refs: this.orchid.symbols(url.searchParams.get('symbol') ?? '') });

@@ -1,0 +1,52 @@
+{
+  "name": "vscode-hydra",
+  "displayName": "Hydra-IDE Swarm Bridge",
+  "description": "Connect VS Code to a running hydra-router: swarm inline completions, assistant chat, static analysis and live agent telemetry.",
+  "version": "1.0.0",
+  "publisher": "hydra",
+  "license": "Apache-2.0",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "AI",
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./extension.js",
+  "contributes": {
+    "configuration": {
+      "title": "Hydra-IDE",
+      "properties": {
+        "hydra.endpoint": {
+          "type": "string",
+          "default": "http://127.0.0.1:8214",
+          "description": "Base URL of the running hydra-router."
+        },
+        "hydra.debounceMs": {
+          "type": "number",
+          "default": 180,
+          "minimum": 0,
+          "description": "Debounce before asking the swarm for an inline completion."
+        },
+        "hydra.statusPollMs": {
+          "type": "number",
+          "default": 3000,
+          "minimum": 500,
+          "description": "How often the status bar polls swarm telemetry."
+        }
+      }
+    },
+    "commands": [
+      { "command": "hydra.ask", "title": "Hydra: Ask the Swarm" },
+      { "command": "hydra.analyze", "title": "Hydra: Analyze Active File" },
+      { "command": "hydra.status", "title": "Hydra: Show Swarm Status" }
+    ]
+  },
+  "scripts": {
+    "package": "npx --yes @vscode/vsce package"
+  }
+}

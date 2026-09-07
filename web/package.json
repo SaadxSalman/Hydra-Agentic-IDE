@@ -1,0 +1,12 @@
+{
+  "name": "hydra-web",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Hydra-IDE web studio — dependency-free swarm IDE client served by hydra-router.",
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "dev": "echo 'Run the router with --dev (CORS) and open the built studio from http://127.0.0.1:8214, or rebuild with: npm run build -w web'",
+    "preview": "node build.mjs && echo 'Studio built to web/dist — start hydra-router and open http://127.0.0.1:8214'"
+  }
+}

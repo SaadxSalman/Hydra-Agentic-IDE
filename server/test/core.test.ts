@@ -6,6 +6,7 @@ import { analyzeFile } from '../src/engine/neuralsim_analyze.ts';
 import { aggregateVotes } from '../src/swarm/consensus.ts';
 import { chatAnswer } from '../src/engine/neuralsim_chat.ts';
 import { resolveSymbol } from '../src/engine/neuralsim_resolve.ts';
+import { generateTestsFor } from '../src/engine/neuralsim_tests.ts';
 
 const FACTS = {
   workspaceFiles: 6,
@@ -104,4 +105,24 @@ test('resolve: finds definitions across workspace', () => {
   const res = resolveSymbol({ symbol: 'load_config', workspace });
   assert.ok(res.refs.length >= 1);
   assert.equal(res.refs[0]!.kind, 'function');
+});
+
+test('tests: synthesizes pytest skeletons for plain functions, skips existing tests', () => {
+  const source = [
+    'def load_config(path):',
+    '    return {}',
+    '',
+    'def main() -> None:',
+    '    load_config("x")',
+    '',
+    'def test_helper():',
+    '    assert True',
+    '',
+  ].join('\n');
+  const res = generateTestsFor({ filePath: 'src/main.py', lang: 'python', source });
+  const names = res.tests.map((t) => t.name);
+  assert.ok(names.includes('test_load_config'), `expected test_load_config, got ${names.join(',')}`);
+  assert.ok(names.includes('test_main'), `annotated def main() -> None should be matched, got ${names.join(',')}`);
+  assert.ok(!names.includes('test_test_helper'), 'existing tests must not be re-wrapped');
+  assert.equal(res.tests[0]!.framework, 'pytest');
 });

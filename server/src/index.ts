@@ -67,7 +67,7 @@ export async function main(): Promise<void> {
 
   log.info(`API:  http://${cfg.host}:${cfg.port}/api/health`);
   log.info(`WS:   ws://${cfg.host}:${cfg.port}/ws`);
-  log.info(`IDE:  ${cfg.dev ? 'dev mode → vite on http://localhost:5173 (backend on 8214)' : `http://${cfg.host}:${cfg.port}`}`);
+  log.info(`IDE:  http://${cfg.host}:${cfg.port}${cfg.dev ? '  (dev mode: CORS enabled)' : ''}`);
 
   const shutdown = (sig: string) => {
     log.warn(`Received ${sig} — draining swarm and shutting down.`);
