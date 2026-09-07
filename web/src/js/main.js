@@ -37,7 +37,8 @@ const editor = new Editor({ textarea: ui.code, pre: ui.pre, gutter: ui.gutter })
 initCompletions(editor, ui);
 const diagnostics = initDiagnostics(editor, ui);
 const explorer = initExplorer(ui, { onOpen, onDelete, onRename });
-initAssistant(ui);
+const assistant = initAssistant(ui);
+assistant.setFileProvider(() => activePath ?? undefined);
 const panels = initPanels(ui, { currentPath: () => activePath, onOpen });
 const swarm = initSwarm(ui);
 
@@ -201,7 +202,7 @@ ws.on('telemetry', (msg) => {
   ui.statModel.innerHTML = `model <b>${model.exists
     ? `${String(model.name ?? 'model')} · ${fmtBytes(model.sizeBytes)}`
     : 'neuralsim (no gguf)'}</b>`;
-  ui.statAgents.innerHTML = `agents <b>${status.agents ?? (msg.agents?.length ?? 0)}</b>`;
+  ui.statAgents.innerHTML = `agents <b>${status.summary?.activeAgents ?? msg.agents?.length ?? 0}</b>`;
   ui.statUptime.innerHTML = `uptime <b>${fmtUptime(status.uptimeS ?? 0)}</b>`;
 });
 

@@ -30,7 +30,7 @@ interface ParsedValue {
   u32?: number;
 }
 
-const decoder = new TextDecoder('utf-8', { ignoreErrors: true });
+const decoder = new TextDecoder('utf-8');
 
 function utf8(buf: Uint8Array, start: number, len: number): string {
   return decoder.decode(buf.slice(start, start + len));
@@ -66,13 +66,13 @@ export async function parseGguf(path: string): Promise<ModelInfo> {
 
       base.format = 'GGUF';
       base.version = view.getUint32(4, true);
-      base.tensorCount = view.getUint64(8, true);
+      base.tensorCount = Number(view.getBigUint64(8, true));
       let offset = 16;
       let metadataCount = 0;
       const guard = 3000;
 
       while (offset + 2 <= bytesRead && metadataCount < guard) {
-        const keyLen = view.getUint64(offset, true); offset += 8;
+        const keyLen = Number(view.getBigUint64(offset, true)); offset += 8;
         if (offset + keyLen > bytesRead) break;
         const key = utf8(head, offset, keyLen); offset += keyLen;
         const vType = view.getUint32(offset, true); offset += 4;
@@ -82,9 +82,9 @@ export async function parseGguf(path: string): Promise<ModelInfo> {
         metadataCount++;
 
         switch (key) {
-          case 'general.architecture': base.architecture = value.text; break;
-          case 'general.name': base.name = value.text; break;
-          case 'general.file_type': base.fileType = value.text ?? (value.u32 ? value.u32.toString() : undefined); break;
+          case 'general.architecture': base.architecture = value.text ?? null; break;
+          case 'general.name': base.name = value.text ?? null; break;
+          case 'general.file_type': base.fileType = value.text ?? (value.u32 ? value.u32.toString() : null); break;
           case 'llama.context_length': base.contextLength = numberFrom(value) ?? base.contextLength; break;
           case 'general.quantization_version': base.quantization = value.u32 ? `Q${value.u32}` : base.quantization; break;
         }
@@ -121,14 +121,14 @@ async function readValue(
       return offset + 4 <= limit ? { bytes: 4 } : undefined;
     case 8: {                              // string
       if (offset + 8 > limit) return undefined;
-      const len = view.getUint64(offset, true);
+      const len = Number(view.getBigUint64(offset, true));
       if (offset + 8 + len > limit) return undefined;
       return { bytes: 8 + len, text: utf8(bytes, offset + 8, len) };
     }
     case 9: return { bytes: 8 };           // array (skip)
     case 10: {                             // u64
       if (offset + 8 > limit) return undefined;
-      return { bytes: 8, u32: Number(view.getUint64(offset, true) & 0xffffffff) };
+      return { bytes: 8, u32: Number(view.getBigUint64(offset, true) & 0xffffffffn) };
     }
     case 11: case 12: return { bytes: 8 }; // i64, f64
     default: return undefined;

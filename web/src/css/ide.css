@@ -213,6 +213,31 @@ input:focus { border-color: var(--accent2); }
 .tree .node .ops button:hover { color: var(--err); }
 .empty { color: var(--fg-faint); font-style: italic; padding: 10px; }
 
+/* ---------- markdown inside chat bubbles ---------- */
+.msg .bubble p { margin: 0 0 6px; }
+.msg .bubble > :last-child { margin-bottom: 0; }
+.msg .bubble b { color: #eaf3fb; font-weight: 600; }
+.msg .bubble i { color: var(--fg-dim); }
+.msg .bubble code {
+  font-family: var(--mono); font-size: 11.5px; color: var(--accent2);
+  background: var(--bg); border: 1px solid var(--line); border-radius: 4px; padding: 0 4px;
+}
+.msg .bubble pre {
+  background: var(--bg); border: 1px solid var(--line); border-radius: 6px;
+  padding: 8px 10px; margin: 6px 0; overflow: auto;
+}
+.msg .bubble pre code { border: 0; background: none; padding: 0; color: #a5d6a7; }
+.msg .bubble ul, .msg .bubble ol { margin: 2px 0 6px 18px; }
+.msg .bubble li { margin: 2px 0; }
+.msg .bubble li::marker { color: var(--accent); }
+.msg .bubble blockquote {
+  margin: 6px 0 0; padding: 4px 10px; border-left: 3px solid var(--accent2);
+  background: rgba(55, 182, 255, .06); border-radius: 0 4px 4px 0; color: var(--fg-dim);
+}
+.msg .bubble h3, .msg .bubble h4, .msg .bubble h5 { color: var(--accent); margin: 6px 0 4px; }
+.msg .bubble hr { border: 0; border-top: 1px solid var(--line); margin: 8px 0; }
+
+
 
 
 

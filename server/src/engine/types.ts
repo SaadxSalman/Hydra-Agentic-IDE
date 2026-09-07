@@ -146,9 +146,18 @@ export interface TestGenResult {
   latencyMs: number;
 }
 
+/** Lightweight code snippet attached to assistant chat (no id/embedding needed). */
+export interface ChatContextSnippet {
+  path: string;
+  startLine: number; // 1-based inclusive
+  endLine: number;   // 1-based inclusive
+  text: string;
+  score?: number;
+}
+
 export interface ChatRequest {
   prompt: string;
-  context: Chunk[];
+  context?: ChatContextSnippet[];
   filePath?: string;
   workspaceSummary?: string;
 }

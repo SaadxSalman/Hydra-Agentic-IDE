@@ -11,6 +11,7 @@ import type { HydraConfig } from './config.ts';
 import type { HydraLogger } from './util/logger.ts';
 import { HydraOrchestrator } from './services/hydra.ts';
 import { TelemetryHub } from './ws.ts';
+import { parseLanguage } from './engine/tokenizer.ts';
 
 const MIME: Record<string, string> = {
   '.html': 'text/html; charset=utf-8',
@@ -118,7 +119,7 @@ export class HydraHttpServer {
       case p === '/api/completions' && req.method === 'POST': {
         const r = await this.orchid.complete({
           filePath: String(body.filePath ?? 'untitled.ts'),
-          lang: String(body.lang ?? 'typescript'),
+          lang: parseLanguage(body.lang, 'typescript'),
           source: String(body.source ?? ''),
           cursor: Number(body.cursor ?? 0),
           context: Array.isArray(body.context) ? body.context : [],

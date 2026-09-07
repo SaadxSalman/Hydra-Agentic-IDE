@@ -4,6 +4,7 @@ import { tokenize, detectLanguage, ngrams } from '../src/engine/tokenizer.ts';
 import { hashEmbed } from '../src/engine/embeddings.ts';
 import { analyzeFile } from '../src/engine/neuralsim_analyze.ts';
 import { aggregateVotes } from '../src/swarm/consensus.ts';
+import type { Vote } from '../src/swarm/consensus.ts';
 import { chatAnswer } from '../src/engine/neuralsim_chat.ts';
 import { resolveSymbol } from '../src/engine/neuralsim_resolve.ts';
 import { generateTestsFor } from '../src/engine/neuralsim_tests.ts';
@@ -78,7 +79,7 @@ test('analyze: security smell detection', () => {
 });
 
 test('consensus: merges weighted votes and returns agreement', () => {
-  const vote = (agentId: string, text: string) => ({
+  const vote = (agentId: string, text: string): Vote => ({
     agentId,
     cluster: 'alpha',
     candidates: [{ text, kind: 'word', confidence: 0.9, sourceAgent: agentId, replaceStart: 0 }],
@@ -95,6 +96,24 @@ test('chat: intents trigger expected answers', async () => {
   assert.ok(res.answer.includes('Swarm Status'));
   const sec = chatAnswer({ prompt: 'review my security' }, FACTS);
   assert.equal(sec.intent, 'security');
+  const model = chatAnswer({ prompt: 'what is the language model you are backed by' }, FACTS);
+  assert.equal(model.intent, 'model');
+  assert.ok(model.answer.includes('neuralsim'), 'model answer names the active backend');
+  const expl = chatAnswer(
+    { prompt: 'ok what about this file', context: [{ path: 'src/main.py', text: 'def main():\n    return 1\n', startLine: 1, endLine: 2, score: 1 }] },
+    FACTS,
+  );
+  assert.equal(expl.intent, 'explain');
+  assert.ok(expl.answer.includes('src/main.py'), 'explain uses the attached file context');
+  const rev = chatAnswer(
+    { prompt: 'so what are you thoughts about my code', context: [{ path: 'src/app.py', text: 'import os\nresult = eval(user_input)\n# TODO: fix\n', startLine: 1, endLine: 3, score: 1 }] },
+    FACTS,
+  );
+  assert.equal(rev.intent, 'review');
+  assert.ok(rev.answer.includes('HYD-3001'), 'review flags eval() usage');
+  const revNoCtx = chatAnswer({ prompt: 'what are your thoughts about my code' }, FACTS);
+  assert.equal(revNoCtx.intent, 'review');
+  assert.ok(revNoCtx.answer.includes('Open a file'), 'review without context nudges the user');
 });
 
 test('resolve: finds definitions across workspace', () => {

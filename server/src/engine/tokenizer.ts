@@ -39,6 +39,17 @@ export type Language =
   | 'markdown'
   | 'text';
 
+const LANGUAGES: readonly Language[] = [
+  'python', 'typescript', 'javascript', 'rust', 'go', 'json', 'html', 'css', 'markdown', 'text',
+];
+
+/** Coerce arbitrary input (e.g. a raw client/VS Code languageId) into a known Language. */
+export function parseLanguage(value: unknown, fallback: Language = 'text'): Language {
+  return typeof value === 'string' && (LANGUAGES as readonly string[]).includes(value)
+    ? value as Language
+    : fallback;
+}
+
 const KEYWORDS: Record<Language, ReadonlySet<string>> = {
   python: new Set([
     'def', 'class', 'return', 'import', 'from', 'as', 'if', 'elif', 'else', 'for', 'while',
@@ -134,7 +145,7 @@ export function tokenize(source: string, lang: Language = 'text'): Token[] {
   }
 
   while (i < n) {
-    const c = source[i];
+    const c = source[i] ?? '';
 
     if (c === '\n') {
       push('newline', i, i + 1);
@@ -198,9 +209,9 @@ export function tokenize(source: string, lang: Language = 'text'): Token[] {
     }
     if (/[A-Za-z_$@]/.test(c)) {
       const s = i;
-      while (i < n && /[A-Za-z0-9_$?!]/.test(source[i])) i++;
+      while (i < n && /[A-Za-z0-9_$?!]/.test(source.charAt(i))) i++;
       if (lang === 'rust') {
-        while (i < n && /[A-Za-z0-9_]/.test(source[i])) i++;
+        while (i < n && /[A-Za-z0-9_]/.test(source.charAt(i))) i++;
       }
       // guarantee forward progress (e.g. a lone `@`)
       if (i === s) {
@@ -218,13 +229,13 @@ export function tokenize(source: string, lang: Language = 'text'): Token[] {
       push(kind, s, i);
       continue;
     }
-    if (/[0-9]/.test(c) || (c === '.' && i + 1 < n && /[0-9]/.test(source[i + 1]))) {
+    if (/[0-9]/.test(c) || (c === '.' && i + 1 < n && /[0-9]/.test(source.charAt(i + 1)))) {
       const s = i;
-      while (i < n && /[0-9a-fA-FxXoObB_.]/.test(source[i])) i++;
+      while (i < n && /[0-9a-fA-FxXoObB_.]/.test(source.charAt(i))) i++;
       if (i < n && (source[i] === 'e' || source[i] === 'E')) {
         i++;
         if (i < n && (source[i] === '+' || source[i] === '-')) i++;
-        while (i < n && /[0-9]/.test(source[i])) i++;
+        while (i < n && /[0-9]/.test(source.charAt(i))) i++;
       }
       push('number', s, i);
       continue;

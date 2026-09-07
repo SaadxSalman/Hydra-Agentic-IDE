@@ -5,9 +5,10 @@
  */
 
 import { WebSocketServer, WebSocket } from 'ws';
-import type { HydraOrchestrator } from '../services/hydra.ts';
-import type { HydraConfig } from '../config.ts';
-import type { HydraLogger } from '../util/logger.ts';
+import type { HydraOrchestrator } from './services/hydra.ts';
+import type { HydraConfig } from './config.ts';
+import type { HydraLogger } from './util/logger.ts';
+import type { CompletionRequest } from './engine/types.ts';
 
 export interface HubMessage {
   type: string;

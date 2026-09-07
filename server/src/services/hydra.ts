@@ -8,7 +8,7 @@ import type { HydraConfig } from '../config.ts';
 import type { HydraLogger } from '../util/logger.ts';
 import type { InferenceEngine, CompletionRequest, CompletionResult, ResolutionResult, RefactorResult, TestGenResult, ChatResult, AnalyzeResult } from '../engine/types.ts';
 import { Workspace } from '../services/workspace.ts';
-import { retrieveContext, DEFAULT_CHUNK_CONFIG } from '../engine/chunker.ts';
+import { retrieveContext, chunkFile, DEFAULT_CHUNK_CONFIG } from '../engine/chunker.ts';
 import type { WorkspaceFile, Chunk } from '../engine/chunker.ts';
 import { SwarmDispatcher } from '../swarm/dispatcher.ts';
 import { aggregateVotes } from '../swarm/consensus.ts';
@@ -154,9 +154,12 @@ export class HydraOrchestrator {
 
   /** Assistant chat (engine-backed: NeuralSim or llama.cpp). */
   async chat(prompt: string, filePath?: string): Promise<ChatResult> {
-    const source = filePath ? this.workspace.get(filePath)?.content ?? '' : '';
-    const context = filePath
-      ? this.chunks({ filePath, lang: detectLang(filePath), source, cursor: 0, context: [] })
+    // The user's chat always refers to the requested file, so its chunks come
+    // first (deterministic). A near-empty retrieval query here used to rank an
+    // arbitrary workspace file into context[0] (e.g. README.md).
+    const file = filePath ? this.workspace.get(filePath) : undefined;
+    const context: Chunk[] = file
+      ? chunkFile({ path: file.path, content: file.content, mtime: 0 }, DEFAULT_CHUNK_CONFIG)
       : [];
     const stats = this.workspace.stats();
     return this.engine.chat({

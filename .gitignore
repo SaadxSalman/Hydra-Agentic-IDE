@@ -25,3 +25,8 @@ Thumbs.db
 # Benchmarks / runtime state
 benchmarks/results/
 server/.hydra/
+
+# Local secrets / env files (never commit)
+.env
+.env.*
+!.env.example

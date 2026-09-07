@@ -57,7 +57,7 @@ export class LlamacppEngine implements InferenceEngine {
         body: JSON.stringify({ prompt, n_predict: 10, temperature: 0.2, top_p: 0.9, n_probs: constraint }),
         signal: AbortSignal.timeout(4000),
       });
-      const data: LlamaCompletionResponse = await res.json();
+      const data = (await res.json()) as LlamaCompletionResponse;
       const text = (data.content ?? data.completion ?? '').replace(/\n+$/, '');
       model = 'llama.cpp (local)';
       if (text.length > 0) {
@@ -80,7 +80,7 @@ export class LlamacppEngine implements InferenceEngine {
 
   async chat(req: ChatRequest): Promise<ChatResult> {
     const started = Date.now();
-    const ctx = req.context.slice(0, 3).map((c) => `// ${c.path} lines ${c.startLine}-${c.endLine}\n${c.text}`).join('\n\n');
+    const ctx = (req.context ?? []).slice(0, 3).map((c) => `// ${c.path} lines ${c.startLine}-${c.endLine}\n${c.text}`).join('\n\n');
     try {
       const res = await fetch(`${this.cfg.llamaServerUrl}/v1/chat/completions`, {
         method: 'POST',

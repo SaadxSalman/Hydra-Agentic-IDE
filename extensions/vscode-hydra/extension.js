@@ -30,6 +30,16 @@ async function get(path) {
   return res.json();
 }
 
+/** Output channels are plain text — strip lightweight Markdown markers. */
+function plain(s) {
+  return String(s ?? '')
+    .replace(/```[\w-]*\n?/g, '')
+    .replace(/```/g, '')
+    .replace(/\*\*([^*]+)\*\*/g, '$1')
+    .replace(/\*([^*]+)\*/g, '$1')
+    .replace(/`([^`]+)`/g, '$1');
+}
+
 function activate(context) {
   const channel = vscode.window.createOutputChannel('Hydra Swarm');
   statusItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 90);
@@ -91,7 +101,7 @@ function activate(context) {
           prompt,
           filePath: ed ? vscode.workspace.asRelativePath(ed.document.uri) : undefined,
         });
-        channel.appendLine(`[${r.intent ?? 'chat'} · ${r.latencyMs ?? 0}ms] ${r.answer}`);
+        channel.appendLine(`[${r.intent ?? 'chat'} · ${r.latencyMs ?? 0}ms] ${plain(r.answer)}`);
         channel.show(true);
       } catch (err) {
         void vscode.window.showErrorMessage(`Hydra: ${err.message}`);
@@ -123,9 +133,10 @@ function activate(context) {
       try {
         const s = await get('/api/status');
         const model = s.model?.exists ? s.model.name : 'neuralsim';
+        const agents = s.summary?.activeAgents ?? s.agents ?? '?';
         void vscode.window.showInformationMessage(
-          `Hydra swarm: ${s.agents} agents · engine ${s.engine?.backend} · model ${model} · ` +
-          `${s.completionsServed} completions · uptime ${s.uptimeS}s`,
+          `Hydra swarm: ${agents} agents · engine ${s.engine?.backend} · model ${model} · ` +
+          `${s.completionsServed ?? s.summary?.totalCompleted ?? 0} completions · uptime ${s.uptimeS ?? 0}s`,
         );
       } catch (err) {
         void vscode.window.showErrorMessage(`Hydra: router unreachable (${err.message})`);
