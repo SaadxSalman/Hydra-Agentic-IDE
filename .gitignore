@@ -1,1 +1,27 @@
+# Model artifacts (kept locally, not committed due to size)
 models/
+
+# Node
+node_modules/
+dist/
+*.tsbuildinfo
+
+# VS Code extension artifacts
+extensions/vscode-hydra/*.vsix
+extensions/vscode-hydra/node_modules/
+extensions/vscode-hydra/out/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.log
+.idea/
+
+# Benchmarks / runtime state
+benchmarks/results/
+server/.hydra/

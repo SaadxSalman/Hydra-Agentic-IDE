@@ -1,0 +1,23 @@
+{
+  "name": "hydra-agentic-ide",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Hydra-IDE — Swarm-native, zero-latency AI code studio powered by 100 local agent nodes orchestrated over a DAG task graph.",
+  "license": "Apache-2.0",
+  "workspaces": [
+    "server",
+    "web"
+  ],
+  "scripts": {
+    "build": "npm run build -w server && npm run build -w web",
+    "dev": "node server/src/index.ts --dev --agents 100 --model ./models/LFM2.5-230M-QAD-Q4_0.gguf",
+    "start": "node server/src/index.ts --agents 100 --model ./models/LFM2.5-230M-QAD-Q4_0.gguf",
+    "test": "npm run test -w server",
+    "bench": "python python/benchmark.py --url http://127.0.0.1:8214 --runs 200",
+    "ext:install": "cd extensions/vscode-hydra && npm install",
+    "ext:package": "cd extensions/vscode-hydra && npm run package"
+  },
+  "engines": {
+    "node": ">=22.6"
+  }
+}

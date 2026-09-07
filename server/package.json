@@ -1,0 +1,20 @@
+{
+  "name": "hydra-server",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Hydra-IDE Router & Swarm Dispatcher — orchestrates the 100-agent LFM swarm over a DAG task graph.",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "start": "node src/index.ts",
+    "dev": "node --watch src/index.ts --dev",
+    "build": "echo \"hydra-server is run from source via native Node TS execution (no build step required)\"",
+    "test": "node --test --experimental-test-coverage test/"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  },
+  "engines": {
+    "node": ">=22.6"
+  }
+}
